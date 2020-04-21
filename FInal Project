@@ -1,0 +1,131 @@
+import dash
+import dash_core_components as dcc
+import dash_html_components as html
+from dash.dependencies import Input, Output, State
+import pandas as pd
+import plotly.graph_objs as go
+
+import numpy as np
+import plotly.express as px
+
+
+
+df = pd.read_csv('https://raw.githubusercontent.com/jboshkoski/Title-I/master/MAP%20and%20Independent%20Reading%20-%20Sheet1.csv?token=AO4OQIDTOU6NQJIZ6LT3DAC6TSNF4')
+external_stylesheets = ['https://codepen.io/amyoshino/pen/jzXypZ.css']
+available_indicators = df['Grade'].unique()
+fig = px.scatter(df, x="Books Read", y="Map Growth", color="Grade", size="Books Read", title="MAP Scores and Independent Reading",
+                color_continuous_scale=px.colors.sequential.Viridis, render_mode="webgl")
+
+
+def header_colors():
+    return {
+        'bg_color': '#0D76BF',
+        'font_color': '#fff',
+        'light_logo': True
+    }
+
+
+app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
+    
+
+server = app.server
+app.config["suppress_callback_exceptions"] = True
+
+app
+colors = {
+    'background': '#FFFFFF',
+    'text': '#2C0039'
+ 
+}
+
+app.layout = html.Div(
+    html.Div([
+        html.Div(
+            [
+                html.Div([
+                    html.Div([
+ 
+                        html.H1(children='Title I Student Growth',
+                                className='twelve columns'),
+                        html.Div(children='''
+                                 Title I Reporting Page
+                        ''',
+                        className='nine columns'
+                )
+            ], className="row"
+            ),
+   ], className="uppercase title"),
+], className="app__header",),
+         
+        
+
+
+html.Div([                  
+
+html.Div(
+    [
+     
+            dcc.Dropdown(
+                id='dropdown_Year',
+                    options=[
+                        {'label': '2019-2020', 'value': '19-20'},
+                        {'label': '2020-2021', 'value': '20-21'},
+                        {'label': '2021-2022', 'value': '21-22'},
+                        ],
+                    value=['19-20'],
+                    multi=True
+                        ),
+            
+        ],
+        style={'width': '100%', 'display': 'inline-block'}
+   
+         ),
+html.Div(children='RIT Score Increase by Grade', style={
+            'textAlign': 'center',
+        }),
+dcc.Graph(
+        id='example-graph-2',
+        figure={
+            'data': [
+                {'x': [1, 2, 3, 4, 5], 'y': [6, 12, 12, 40, 2], 'type': 'bar', 'name': '2019-2020'},
+                {'x': [1, 2, 3, 4, 5], 'y': [6, 10, 20, 5, 10], 'type': 'bar', 'name': u'2020-2021'},
+                {'x': [1, 2, 3, 4, 5], 'y': [2, 10, 3, 14, 6], 'type': 'bar', 'name': u'2021-2022'},
+            ],
+            'layout': {  
+                'plot_bgcolor': colors['background'],
+                'paper_bgcolor': colors['background'],
+                'font': {
+                    'color': colors['text']                 
+                
+                }
+            }
+        }
+        )
+    ],className='five columns'
+    ),
+    
+    html.Div([ 
+   
+
+        html.Div([
+          
+    
+                      
+            dcc.Graph(figure=fig, id='graph-with-slider'),
+                 
+   
+            ], className= 'seven columns'),
+        ], className="row"
+  
+         )
+], className='ten columns offset-by-one')
+    
+)
+
+
+
+
+
+if __name__ == '__main__':
+    app.run_server(debug=True)
+    
